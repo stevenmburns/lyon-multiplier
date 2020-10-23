@@ -82,7 +82,7 @@ class SimpleArrayTester[T <: SimpleBitcellIfc]( factory: () => SimpleBitcellArra
           }
 
         def from_lsb_first( s : IndexedSeq[BigInt]) : BigInt =
-          s.reverse.foldLeft(0){ (x, el) => (x<<1) | el}
+          s.reverse.foldLeft(BigInt(0)){ (x, el) => (x<<1) | el}
 
         val x_lsb_first = lsb_first(xvalue).toIndexedSeq
         println( s"x_lsb: ${x_lsb_first}")
@@ -94,7 +94,6 @@ class SimpleArrayTester[T <: SimpleBitcellIfc]( factory: () => SimpleBitcellArra
           poke( c.yin(i), if ( i< y_lsb_first.size) y_lsb_first(i) else BigInt(0))
           poke( c.rin(i), 1)
         }
-        var z = BigInt(0)
         poke( c.l.pp, 0)
         val z_lsb_first = 
           for { i <- 0 until 2*c.n} yield {
@@ -104,16 +103,7 @@ class SimpleArrayTester[T <: SimpleBitcellIfc]( factory: () => SimpleBitcellArra
             pp
           }
 
-/*
-        for { i <- 0 until 2*c.n} {
-          poke( c.l.x, if ( i< x_lsb_first.size) x_lsb_first(i) else BigInt(0))
-          step(1)
-          val pp = peek( c.r.pp)
-          z = z | (pp<<i)
-        }
- */
-
-        expect( z == from_lsb_first(z_lsb_first), s"Two different things match.")
+        val z = from_lsb_first(z_lsb_first)
 
         expect( z == xvalue*yvalue, s"Correct value: $z ${xvalue*yvalue}")
         println( s"z: ${z} ${z.toString(2)}")
