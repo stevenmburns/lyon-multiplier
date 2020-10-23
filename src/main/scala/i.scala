@@ -79,14 +79,14 @@ class PipelinedBitcell extends BitcellIfc {
   r.r := RegNext(l.r)
 }
 
-class SimpleBitcellArray[T <: SimpleBitcellIfc]( val n : Int, factory: () => T) extends MultiIOModule {
+class SimpleBitcellArray[T <: SimpleBitcellIfc]( val k : Int, factory: () => T) extends MultiIOModule {
   val l = IO(Flipped(new TwoWire))
   val r = IO(new TwoWire)
 
-  val yin = IO(Input(Vec(n,Bool())))
-  val rin = IO(Input(Vec(n,Bool())))
+  val yin = IO(Input(Vec(k,Bool())))
+  val rin = IO(Input(Vec(k,Bool())))
 
-  val ms = IndexedSeq.fill(n){ Module(factory())}
+  val ms = IndexedSeq.fill(k){ Module(factory())}
   r := (yin,rin,ms).zipped.foldLeft( l){ case (left,(yy,rr,m)) =>
     m.l := left
     m.yin := yy
@@ -95,8 +95,8 @@ class SimpleBitcellArray[T <: SimpleBitcellIfc]( val n : Int, factory: () => T) 
   }
 }
 
-class BitcellArray[T <: BitcellIfc]( val n : Int, factory: () => T) extends BitcellIfc {
-  r := (IndexedSeq.fill(n){ Module(factory())}).foldLeft( l){ (left,m) =>
+class BitcellArray[T <: BitcellIfc]( val k : Int, factory: () => T) extends BitcellIfc {
+  r := (IndexedSeq.fill(k){ Module(factory())}).foldLeft( l){ (left,m) =>
     m.l := left
     m.r
   }
