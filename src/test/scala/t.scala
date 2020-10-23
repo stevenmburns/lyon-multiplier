@@ -74,19 +74,19 @@ class SimpleArrayTester[T <: SimpleBitcellIfc]( factory: () => SimpleBitcellArra
         val xvalue = 45
         val yvalue = 17
 
-        def lsb_first( x : BigInt) : List[BigInt] =
-          if ( x == 0) {
+        def lsb_first( n : Int, x : BigInt) : List[BigInt] =
+          if ( n == 0) {
             List()
           } else {
-            (x % 2) :: lsb_first( x>>1)
+            (x % 2) :: lsb_first( n-1, x>>1)
           }
 
         def from_lsb_first( s : IndexedSeq[BigInt]) : BigInt =
           s.reverse.foldLeft(BigInt(0)){ (x, el) => (x<<1) | el}
 
-        val x_lsb_first = lsb_first(xvalue).toIndexedSeq
+        val x_lsb_first = lsb_first(c.n,xvalue).toIndexedSeq
         println( s"x_lsb: ${x_lsb_first}")
-        val y_lsb_first = lsb_first(yvalue).toIndexedSeq
+        val y_lsb_first = lsb_first(c.n,yvalue).toIndexedSeq
         println( s"y_lsb: ${y_lsb_first}")
 
         println( s"Number of stages: ${c.n}")
