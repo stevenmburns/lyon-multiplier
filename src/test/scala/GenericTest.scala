@@ -13,8 +13,8 @@ class GenericTest extends FlatSpec with Matchers {
 
   val optionsManager = new TesterOptionsManager {
     testerOptions = testerOptions.copy(
-      backendName="treadle"
-//      backendName="verilator"
+//      backendName="treadle"
+      backendName="verilator"
 //      backendName="vcs"
       ,isVerbose=true
 //      ,moreVcsFlags=extra
