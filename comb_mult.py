@@ -5,18 +5,16 @@ import random
 def test_A():
     rnd = random.Random()
 
-    #n = 2**14
-    n = 2**3
+    n = 2**14
 
-    xn = 5
-    yn = 3
+    xn = 16
+    yn = 16
 
     zero = bitarray(n)
     zero.setall(0)
-    print(zero)
 
-    x = [ rnd.randrange(1<<xn) for _ in range(n)]
-    y = [ rnd.randrange(1<<yn) for _ in range(n)]
+    x = np.array([ rnd.randrange(1<<xn) for _ in range(n)], dtype=np.int64)
+    y = np.array([ rnd.randrange(1<<yn) for _ in range(n)], dtype=np.int64)
 
     xs = []
     for j in range(xn):
@@ -28,22 +26,23 @@ def test_A():
 
     result = []
 
+    ops = 0
     cs = [zero for _ in range(yn)]
     for i in range(xn+yn):
         s = zero
-        print(s)
         for j in range(yn):
             a = s
             b = (xs[i-j] if (0 <= i-j < xn) else zero) & ys[j]
+            ops += 1
             c = cs[j]
             s = a^b^c
+            ops += 2
             co = a&b|a&c|b&c 
-            print(a,b,c,s,co)
+            ops += 5
             cs[j] = co
-        print(s) 
         result.append(s)
 
-    print(result)
+    print(f"Ops: {ops} loops: {(xn+yn)*yn}")
 
     actual = np.zeros( n, np.int64)
     for i in range(xn+yn):
@@ -52,7 +51,7 @@ def test_A():
     print(x)
     print(y)
 
-    expected = np.array( [u*v for u,v in zip(x,y)], dtype=np.int64)
+    expected = x*y
 
     print( expected)
     print( actual)
