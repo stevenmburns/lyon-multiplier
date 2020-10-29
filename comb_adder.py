@@ -45,26 +45,17 @@ def test_A():
 
     print(result)
 
-    np_sums = np.zeros( n, np.int64)
+    actual = np.zeros( n, np.int64)
     for i in range(xn+yn):
-      np_sums += (1<<i)*np.array(list(result[i]))
-
-    sums = []
-    for idx in range(n):
-      s = 0
-      for i in range(xn+yn):
-         s += (1<<i) if result[i][idx] else 0
-      sums.append(s)
+      actual += (1<<i)*np.array(list(result[i]))
 
     print(x)
     print(y)
 
     expected = np.array( [u*v for u,v in zip(x,y)], dtype=np.int64)
-    actual = np.array( sums, dtype=np.int64)
 
     print( expected)
     print( actual)
-    print( np_sums)
     assert np.allclose( expected, actual)
 
 
