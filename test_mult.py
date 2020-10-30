@@ -15,53 +15,55 @@ def convert_from_bits_lsb_first( zs):
       actual += (1<<i)*np.array(list(z))
     return actual
 
+def carry_save( a, b, c):
+    s = a^b^c
+    c = a&b|a&c|b&c 
+    return s,c
+
 def add(xs,ys):
     n = len(xs[0])
     xn = len(xs)
     yn = len(ys)
- 
+    zn = max(xn,yn)+1
+    ops = zn*(2+5)
+    print(f"Ops: {ops} loops: {zn}")
+
     zero = bitarray(n)
     zero.setall(0)
 
-    result = []
+    zs = []
 
     c = zero
-    for i in range(max(xn,yn)+1):
+    for i in range(zn):
         a = xs[i] if (i < xn) else zero
         b = ys[i] if (i < yn) else zero
-        s = a^b^c
-        c = a&b|a&c|b&c 
-        result.append(s)
+        s,c = carry_save(a,b,c)
+        zs.append(s)
 
-    ops = (max(xn,yn)+1)*(2+5)
-
-    print(f"Ops: {ops} loops: {max(xn,yn)+1}")
-    return result
+    return zs
 
 def mult(xs,ys):
     n = len(xs[0])
     xn = len(xs)
     yn = len(ys)
+    zn = xn+yn
+    ops = zn*yn*(1+2+5)
+    print(f"Ops: {ops} loops: {zn*yn}")
 
     zero = bitarray(n)
     zero.setall(0)
 
-    result = []
+    zs = []
     cs = [zero for _ in range(yn)]
-    for i in range(xn+yn):
+    for i in range(zn):
         s = zero
         for j in range(yn):
             a = s
             b = (xs[i-j] if (0 <= i-j < xn) else zero) & ys[j]
-            c = cs[j]
-            s = a^b^c
-            cs[j] = a&b|a&c|b&c 
-        result.append(s)
+            s, cs[j] = carry_save(a,b,cs[j])
+        zs.append(s)
 
-    ops = (xn+yn)*yn*(1+2+5)
-    print(f"Ops: {ops} loops: {(xn+yn)*yn}")
-
-    return result
+    return zs
 
 
 def test_add():
